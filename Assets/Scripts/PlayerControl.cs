@@ -11,7 +11,7 @@ public class PlayerControl : MonoBehaviour
     [SerializeField] Vector2 accel;
     public float gravity;
     Rigidbody2D rb;
-    public bool isGround;
+    public bool isGround, isWall;
     private bool jumpInput;
     private float timeSinceJumpInput;
     public int jumps;
@@ -38,6 +38,7 @@ public class PlayerControl : MonoBehaviour
     {
         //Get Values (Start)
         GetValue();
+        CheckGround();
         //Jump
         Gravity();
         JumpCalcs();
@@ -173,22 +174,37 @@ public class PlayerControl : MonoBehaviour
         }
     }
 
+    private void CheckGround()
+    {
+        //Get the box
+        BoxCollider2D bc = transform.Find("GroundBox").gameObject.GetComponent<BoxCollider2D>();
+        //Top left
+        Vector2 startPoint = new Vector2(bc.bounds.center.x - bc.bounds.extents.x, bc.bounds.center.y + bc.bounds.extents.y);
+        Vector2 endPoint = new Vector2(bc.bounds.center.x + bc.bounds.extents.x, bc.bounds.center.y - bc.bounds.extents.y);
+        Debug.DrawLine(startPoint, endPoint, Color.red);
+
+        bool collidedGround = false;
+        foreach (Collider2D coll in Physics2D.OverlapAreaAll(startPoint, endPoint))
+        {
+            if (coll.gameObject.CompareTag("SolidGround"))
+            {
+                collidedGround = true;
+                jumps = 2;
+                isGround = true;
+            }
+        }
+        //if not a single collision
+        if (!collidedGround) isGround = false;
+    }
+
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        //Get points and compare if ground or smth else
-        if (collision.gameObject.CompareTag("SolidGround"))
-        {
-            isGround = true;
-            jumps = 2;
-        }
+
     }
 
     private void OnCollisionExit2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("SolidGround"))
-        {
-            isGround = false;
-        }
+
     }
 
 }
