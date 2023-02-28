@@ -9,11 +9,10 @@ public class PlayerControl : MonoBehaviour
 
     public Vector2 pos, speed, maxSpeed;
     [SerializeField] Vector2 accel;
-    public float gravity;
+    public float gravity, coyoteTime, timeSinceJumpInput, timeSinceTouchGround;
     Rigidbody2D rb;
     public bool isGround, isWall;
     private bool jumpInput;
-    private float timeSinceJumpInput;
     public int jumps;
     
 
@@ -27,6 +26,7 @@ public class PlayerControl : MonoBehaviour
         gravity = 38f;
         timeSinceJumpInput = 0;
         jumps = 2;
+        coyoteTime = 0.12f;
     }
 
     // Update is called once per frame
@@ -124,7 +124,7 @@ public class PlayerControl : MonoBehaviour
 
     private void CheckJumpInput()
     {
-        if (!jumpInput && Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space))
         {
             jumpInput = true;
             timeSinceJumpInput = 0;
@@ -133,30 +133,40 @@ public class PlayerControl : MonoBehaviour
 
     private void JumpCalcs()
     {
+        //You were doing timeSinceJumpInput, should be time SINCE TOUCH GROUND
+
         //Timer
-        if (timeSinceJumpInput > 0.2f)
+        if ((timeSinceTouchGround > coyoteTime) && jumps > 1 && !isGround)
         {
-            jumpInput = false;
-            return;
-        }
-        //Normal Jump
-        if (isGround && jumpInput)
-        {
-            speed.y = 15;
-            jumpInput = false;
             jumps--;
-        //Double Jump
-        } else if (!isGround && jumpInput && jumps != 0)
-        {
-            speed.y = 15;
-            jumpInput = false;
-            jumps--;
+            Debug.Log("--Jump timer");
         }
 
-        if (!isGround && jumpInput)
+        //Extra time for jump
+        if (!isGround && (timeSinceTouchGround <= coyoteTime) && jumpInput && jumps > 0)
         {
-            timeSinceJumpInput += Time.deltaTime;
+            speed.y = 15;
+            jumpInput = false;
+            jumps--;
+            Debug.Log("--Extra Jump");
+        } //Normal Jump
+        else if (isGround && jumpInput)
+        {
+            speed.y = 15;
+            jumpInput = false;
+            jumps--;
+            Debug.Log("--Normal Jump");
+
+        } //Double Jump
+        else if (!isGround && jumpInput && jumps != 0)
+        {
+            speed.y = 15;
+            jumpInput = false;
+            jumps--;
+            Debug.Log("--Double Jump");
         }
+
+        timeSinceJumpInput += Time.deltaTime;
     }
 
     private void Gravity()
@@ -191,10 +201,15 @@ public class PlayerControl : MonoBehaviour
                 collidedGround = true;
                 jumps = 2;
                 isGround = true;
+                timeSinceTouchGround = 0;
             }
         }
         //if not a single collision
-        if (!collidedGround) isGround = false;
+        if (!collidedGround)
+        {
+            isGround = false;
+            timeSinceTouchGround += Time.deltaTime;
+        }
     }
 
     private void OnCollisionEnter2D(Collision2D collision)
