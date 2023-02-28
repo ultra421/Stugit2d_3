@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - SolidGround
+  - Collectible
   layers:
   - Default
   - TransparentFX
