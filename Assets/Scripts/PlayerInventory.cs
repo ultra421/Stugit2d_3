@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour, IDataPersistence
 {
+
     public Dictionary<string,int> inventory;
     // Start is called before the first frame update
     void Start()
