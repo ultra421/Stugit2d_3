@@ -3,8 +3,14 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class CoinScript : MonoBehaviour
+public class CoinScript : MonoBehaviour, IDataPersistence
 {
+    [SerializeField] private string id;
+    [ContextMenu("Generate guid for id")]
+    private void GenerateGuid()
+    {
+        id = System.Guid.NewGuid().ToString();
+    }
     public bool isCollected;
     // Start is called before the first frame update
     void Start()
@@ -26,5 +32,15 @@ public class CoinScript : MonoBehaviour
         text.text = "Coins = " + GameObject.Find("Player").GetComponent<PlayerInventory>().GetCollectedAmount("coin");
 
         this.transform.gameObject.SetActive(false);
+    }
+
+    public void LoadData(GameData data)
+    {
+        
+    }
+
+    public void SaveData(GameData data)
+    {
+        
     }
 }
