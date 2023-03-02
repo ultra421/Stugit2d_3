@@ -6,12 +6,12 @@ using UnityEngine;
 public class GameData {
 
     public int coinCount;
-    public Dictionary<string, bool> coinsCollected;
+    public SerializableDictionary<string, bool> coinsCollected;
 
     //Initial Values
     public GameData()
     {
         this.coinCount = 0;
-        coinsCollected= new Dictionary<string, bool>();
+        coinsCollected= new SerializableDictionary<string, bool>();
     }
 }

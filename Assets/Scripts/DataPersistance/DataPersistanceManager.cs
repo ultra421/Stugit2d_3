@@ -56,6 +56,7 @@ public class DataPersistanceManager : MonoBehaviour
         //Get the data from the other scripts that implement to save
         foreach (IDataPersistence persObj in dataPersistenceList)
         {
+            Debug.Log("Saving " + persObj);
             persObj.SaveData(gameData);
         }
         Debug.Log("Saved gameData coins = " + gameData.coinCount);

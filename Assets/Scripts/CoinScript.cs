@@ -36,11 +36,23 @@ public class CoinScript : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
-        
+        //Stores the result of the map into isCollectd
+        data.coinsCollected.TryGetValue(id, out isCollected);
+        Debug.Log("Is this coin collected ? " + isCollected);
+        if (isCollected)
+        {
+            CoinCollected();
+        }
     }
 
     public void SaveData(GameData data)
     {
-        
+        if (data.coinsCollected.ContainsKey(id))
+        {
+            data.coinsCollected.Remove(id);
+        }
+        Debug.Log("Saving coin " + id + " collected = " + isCollected);
+        data.coinsCollected.Add(id, isCollected);
+        Debug.Log("Saved this = " + data.coinsCollected[id]);
     }
 }

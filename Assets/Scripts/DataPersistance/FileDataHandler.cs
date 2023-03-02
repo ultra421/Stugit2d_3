@@ -67,6 +67,7 @@ public class FileDataHandler
                 {
                     writer.Write(dataToStore);
                     Debug.Log("Saved sucesfully!");
+                    Debug.Log("Data to store");
                 }
             }
 

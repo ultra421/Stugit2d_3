@@ -1,16 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerInventory : MonoBehaviour, IDataPersistence
 {
 
-    public Dictionary<string,int> inventory;
+    public SerializableDictionary<string,int> inventory;
     // Start is called before the first frame update
     void Start()
     {
-        if (inventory == null) { inventory = new Dictionary<string,int>(); }
+        if (inventory == null) { inventory = new SerializableDictionary<string,int>(); }
     }
 
     // Update is called once per frame
@@ -52,12 +53,19 @@ public class PlayerInventory : MonoBehaviour, IDataPersistence
     public void LoadData(GameData data)
     {
         Debug.Log("found " + data.coinCount + " coins");
-        if (inventory == null) { inventory = new Dictionary<string, int>(); }
+        if (inventory == null) { inventory = new SerializableDictionary<string, int>(); }
         inventory["coin"] = data.coinCount;
+        UpdateGui();
     }
 
     public void SaveData(GameData data)
     {
         data.coinCount = GetCollectedAmount("coin");
+    }
+
+    public void UpdateGui()
+    {
+        TextMeshProUGUI text = GameObject.Find("CoinCount").GetComponent<TextMeshProUGUI>();
+        text.text = "Coins = " + inventory["coin"];
     }
 }
