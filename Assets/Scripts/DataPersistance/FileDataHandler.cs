@@ -18,7 +18,7 @@ public class FileDataHandler
     public GameData Load()
     {
         string fullPath = Path.Combine(dataDirPath, dataFileName);
-        GameData loadedData = null;
+        GameData loadedData = new GameData();
 
         if (File.Exists(fullPath))
         {
@@ -43,7 +43,7 @@ public class FileDataHandler
             }
         } else
         {
-            Debug.Log("File didn't exist");
+            Debug.Log("File didn't exist at " + Path.Combine(dataDirPath,dataFileName));
         }
         Debug.Log("Found this data = " + loadedData.coinCount);
         return loadedData;
