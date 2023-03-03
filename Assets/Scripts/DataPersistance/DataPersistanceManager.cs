@@ -6,6 +6,8 @@ using UnityEngine.SceneManagement;
 
 public class DataPersistanceManager : MonoBehaviour
 {
+    [Header("Debugging")]
+    [SerializeField] private bool initializeDataIfNull = false;
     [Header("File Storage Config")]
     [SerializeField] private string fileName;
     private GameData gameData;
@@ -16,11 +18,14 @@ public class DataPersistanceManager : MonoBehaviour
     //Called first
     private void Awake()
     { 
+        
         if (instance != null)
         {
-            Debug.LogError("Found more than one dataManagers");
+            Debug.LogError("Found more than one dataManagers destroyed the new one");
+            Destroy(this.gameObject);
         }
         instance = this;
+        DontDestroyOnLoad(gameObject);
 
         this.fileDataHandler = new FileDataHandler(Application.persistentDataPath, fileName);
 
@@ -69,11 +74,16 @@ public class DataPersistanceManager : MonoBehaviour
     {
         this.gameData = fileDataHandler.Load();
 
+        if (this.gameData == null && initializeDataIfNull)
+        {
+            NewGame();
+        }
+
         //Load save data from a file
         if (this.gameData == null)
         {
-            Debug.Log("New game created");
-            NewGame();
+            Debug.Log("Loaded data is null, A new game needs to be created");
+            return;
         }
 
         foreach(IDataPersistence persObj in dataPersistenceList)
@@ -85,6 +95,12 @@ public class DataPersistanceManager : MonoBehaviour
 
     public void SaveGame()
     {
+        if (this.gameData == null)
+        {
+            Debug.LogWarning("No data was found. A new Game needs to be started before data can be saved");
+            return;
+        }
+
         //Get the data from the other scripts that implement to save
         foreach (IDataPersistence persObj in dataPersistenceList)
         {
@@ -108,6 +124,11 @@ public class DataPersistanceManager : MonoBehaviour
         IEnumerable<IDataPersistence> dataPersistenceObjectList = FindObjectsOfType<MonoBehaviour>()
             .OfType<IDataPersistence>();
         return new List<IDataPersistence>(dataPersistenceObjectList);
+    }
+
+    public bool hasGameData ()
+    {
+        return gameData != null;
     }
 
 }

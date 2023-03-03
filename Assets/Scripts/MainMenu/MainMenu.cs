@@ -34,4 +34,13 @@ public class MainMenu : MonoBehaviour
         newGameButton.interactable = state;
         continueGameButton.interactable = state;
     }
+
+    private void Start()
+    {
+        if (!DataPersistanceManager.instance.hasGameData())
+        {
+            Debug.Log("No data was found, continue button is disabled");
+            continueGameButton.interactable = false;
+        }
+    }
 }
