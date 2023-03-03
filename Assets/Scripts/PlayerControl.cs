@@ -12,8 +12,8 @@ public class PlayerControl : MonoBehaviour
     public float gravity, coyoteTime, timeSinceJumpInput, timeSinceTouchGround;
     Rigidbody2D rb;
     public bool isGround, isWall;
-    private bool jumpInput;
-    public int jumps;
+    private bool jumpInput, isExtraJumpLowered;
+    public int defaultJumps,jumps;
     
 
     // Start is called before the first frame update
@@ -25,7 +25,15 @@ public class PlayerControl : MonoBehaviour
         isGround = false;
         gravity = 38f;
         timeSinceJumpInput = 0;
-        jumps = 2;
+        //set jumps
+        if (PlayerPrefs.GetInt("jumpAmount") == 0)
+        {
+            defaultJumps = 2; //Default
+        } else
+        {
+            defaultJumps = PlayerPrefs.GetInt("jumpAmount");
+        }
+        jumps = defaultJumps;
         coyoteTime = 0.12f;
     }
 
@@ -138,17 +146,17 @@ public class PlayerControl : MonoBehaviour
         //Timer
         if ((timeSinceTouchGround > coyoteTime) && jumps > 1 && !isGround)
         {
-            jumps--;
-            Debug.Log("--Jump timer");
+            isExtraJumpLowered = true; //Change this var name makes no sense
         }
 
         //Extra time for jump
-        if (!isGround && (timeSinceTouchGround <= coyoteTime) && jumpInput && jumps > 0)
+        if (!isGround && (timeSinceTouchGround <= coyoteTime) && jumpInput && jumps > 0 && !isExtraJumpLowered)
         {
             speed.y = 15;
             jumpInput = false;
             jumps--;
             Debug.Log("--Extra Jump");
+            isExtraJumpLowered = true;
         } //Normal Jump
         else if (isGround && jumpInput)
         {
@@ -199,9 +207,10 @@ public class PlayerControl : MonoBehaviour
             if (coll.gameObject.CompareTag("SolidGround"))
             {
                 collidedGround = true;
-                jumps = 2;
+                jumps = defaultJumps;
                 isGround = true;
                 timeSinceTouchGround = 0;
+                isExtraJumpLowered = false;
             }
         }
         //if not a single collision

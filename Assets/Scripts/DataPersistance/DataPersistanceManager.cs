@@ -13,6 +13,7 @@ public class DataPersistanceManager : MonoBehaviour
     private GameData gameData;
     private List<IDataPersistence> dataPersistenceList;
     private FileDataHandler fileDataHandler;
+    private string selectedProfileId = "test";
     public static DataPersistanceManager instance { get; private set; }
 
     //Called first
@@ -68,11 +69,11 @@ public class DataPersistanceManager : MonoBehaviour
     {
         this.gameData = new GameData();
         //Save new Data (also saves on scene change so it's unecessary)
-        fileDataHandler.Save(this.gameData);
+        fileDataHandler.Save(this.gameData, selectedProfileId);
     }
     public void LoadGame()
     {
-        this.gameData = fileDataHandler.Load();
+        this.gameData = fileDataHandler.Load(selectedProfileId);
 
         if (this.gameData == null && initializeDataIfNull)
         {
@@ -110,7 +111,7 @@ public class DataPersistanceManager : MonoBehaviour
         Debug.Log("Saved gameData coins = " + gameData.coinCount);
 
         //Save the data to a file
-        fileDataHandler.Save(gameData);
+        fileDataHandler.Save(gameData, selectedProfileId);
 
     }
 
@@ -129,6 +130,11 @@ public class DataPersistanceManager : MonoBehaviour
     public bool hasGameData ()
     {
         return gameData != null;
+    }
+
+    public Dictionary<string, GameData> GetAllProfilesGameData()
+    {
+        return fileDataHandler.LoadAllProfles();
     }
 
 }

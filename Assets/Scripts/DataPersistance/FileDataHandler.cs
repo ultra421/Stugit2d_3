@@ -15,9 +15,10 @@ public class FileDataHandler
         this.dataFileName = dataFileName;
     }
 
-    public GameData Load()
+    public GameData Load(string profileId)
     {
-        string fullPath = Path.Combine(dataDirPath, dataFileName);
+        //Loads the data from the folder/save
+        string fullPath = Path.Combine(dataDirPath,profileId, dataFileName);
         GameData loadedData = null;
 
         if (File.Exists(fullPath))
@@ -48,9 +49,9 @@ public class FileDataHandler
         return loadedData;
     }
 
-    public void Save(GameData data)
+    public void Save(GameData data, string profileId)
     {
-        string fullPath = Path.Combine(dataDirPath, dataFileName);
+        string fullPath = Path.Combine(dataDirPath, profileId, dataFileName);
         try
         {
             //Create the directory where the file will be saved to
@@ -75,5 +76,34 @@ public class FileDataHandler
         {
             Debug.Log("Error when save " + e.ToString());
         }
+    }
+
+    public Dictionary<string, GameData> LoadAllProfles()
+    {
+        Dictionary<string, GameData> profileDicitonary = new Dictionary<string, GameData>();
+
+        IEnumerable<DirectoryInfo> dirInfos = new DirectoryInfo(dataDirPath).EnumerateDirectories();
+        foreach(DirectoryInfo dirInfo in dirInfos)
+        {
+            string profileId = dirInfo.Name;
+
+            string fullPath = Path.Combine(dataDirPath,profileId, dataFileName);
+            if (!File.Exists(fullPath))
+            {
+                Debug.LogWarning("Profile didn't contain a save file!");
+                continue;
+            }
+
+            GameData profileData = Load(profileId);
+
+            if (profileData != null)
+            {
+                profileDicitonary.Add(profileId,profileData);
+            } else
+            {
+                Debug.LogError("Couldn't load data from some reaosn");
+            }
+        }
+        return profileDicitonary;
     }
 }

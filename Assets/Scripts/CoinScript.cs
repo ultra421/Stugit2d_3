@@ -38,7 +38,7 @@ public class CoinScript : MonoBehaviour, IDataPersistence
     {
         //Stores the result of the map into isCollectd
         data.coinsCollected.TryGetValue(id, out isCollected);
-        Debug.Log("Is this coin collected ? " + isCollected);
+        Debug.Log("Is this coin collected ? " + isCollected + id);
         if (isCollected)
         {
             CoinCollected();
