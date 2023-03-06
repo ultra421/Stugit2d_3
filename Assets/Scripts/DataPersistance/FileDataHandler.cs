@@ -44,7 +44,7 @@ public class FileDataHandler
             }
         } else
         {
-            Debug.Log("File didn't exist at " + Path.Combine(dataDirPath,dataFileName));
+            Debug.Log("File didn't exist at " + fullPath);
         }
         return loadedData;
     }
@@ -60,6 +60,8 @@ public class FileDataHandler
             //Serialize the data
             string dataToStore = JsonUtility.ToJson(data, true);
 
+            Debug.Log("Saving into " + fullPath);
+
             //Write it into a file
             using (FileStream stream = new FileStream(fullPath, FileMode.Create))
             {
@@ -67,7 +69,6 @@ public class FileDataHandler
                 {
                     writer.Write(dataToStore);
                     Debug.Log("Saved sucesfully!");
-                    Debug.Log("Data to store");
                 }
             }
 

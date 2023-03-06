@@ -14,6 +14,7 @@ public class PlayerControl : MonoBehaviour
     public bool isGround, isWall;
     private bool jumpInput, isExtraJumpLowered;
     public int defaultJumps,jumps;
+    [SerializeField] Animator animator;
     
 
     // Start is called before the first frame update
@@ -55,6 +56,7 @@ public class PlayerControl : MonoBehaviour
         CheckMaxSpeed();
         SlowDownHorizontal();
         //Final
+        AnimatorVars();
         ApplyValues();
     }
 
@@ -219,6 +221,29 @@ public class PlayerControl : MonoBehaviour
             isGround = false;
             timeSinceTouchGround += Time.deltaTime;
         }
+    }
+
+    private void AnimatorVars()
+    {
+        animator.SetBool("moveSide", (speed.x > 0 || speed.x < 0));
+        animator.SetBool("standStill", speed.x == 0);
+        animator.SetBool("isJumping", (!isGround && speed.y > 0));
+        animator.SetBool("isGround", isGround);
+        animator.SetBool("isFalling", speed.y < 0);
+        //Animator jumps is jumps made
+        animator.SetInteger("jumps", (defaultJumps - jumps));
+
+        //Flip the Sprite depending on direction
+        if (speed.x > 0)
+        {
+            SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteRenderer.flipX = false;
+        } else if (speed.x < 0)
+        {
+            SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteRenderer.flipX = true;
+        }
+
     }
 
     private void OnCollisionEnter2D(Collision2D collision)

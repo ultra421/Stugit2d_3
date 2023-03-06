@@ -5,7 +5,7 @@ using UnityEngine;
 public class SaveSlot : MonoBehaviour
 {
     [Header("Profile")]
-    [SerializeField] private string profileId;
+    [SerializeField] public string profileId;
 
     public void SetData(GameData data)
     {

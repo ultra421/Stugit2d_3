@@ -7,7 +7,14 @@ public class MenuCoinScript : MonoBehaviour, IDataPersistence
 {
     public void LoadData(GameData data)
     {
-        gameObject.GetComponent<TextMeshProUGUI>().text = "COINS COLLECTED = " + data.coinCount;
+        TextMeshProUGUI coinText = gameObject.GetComponent<TextMeshProUGUI>();
+        if (data != null)
+        {
+            coinText.text = "COINS COLLECTED = " + data.coinCount;
+        } else
+        {
+            coinText.text = "COINS COLLECTED = 0";
+        }
     }
 
     public void SaveData(GameData data)

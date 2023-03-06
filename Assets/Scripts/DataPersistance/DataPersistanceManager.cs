@@ -13,7 +13,7 @@ public class DataPersistanceManager : MonoBehaviour
     private GameData gameData;
     private List<IDataPersistence> dataPersistenceList;
     private FileDataHandler fileDataHandler;
-    private string selectedProfileId = "test";
+    private string selectedProfileId = "1";
     public static DataPersistanceManager instance { get; private set; }
 
     //Called first
@@ -22,8 +22,12 @@ public class DataPersistanceManager : MonoBehaviour
         
         if (instance != null)
         {
-            Debug.LogError("Found more than one dataManagers destroyed the new one");
+            Debug.LogError("Found more than one dataManagers " + instance.GetInstanceID() + " the new one is self-destroying " + this.gameObject.GetInstanceID());
             Destroy(this.gameObject);
+            return;
+        } else
+        {
+            Debug.Log("instance was null");
         }
         instance = this;
         DontDestroyOnLoad(gameObject);
@@ -55,14 +59,15 @@ public class DataPersistanceManager : MonoBehaviour
     {
         Debug.Log("onSceneLoad and Persistance path =" + Application.persistentDataPath);
 
+        Debug.Log("Loading dataManager" + this.GetInstanceID() + "instance is = " + instance.GetInstanceID());
         dataPersistenceList = FindAllDataPersistenceObjects();
         LoadGame();
     }
 
     public void OnSceneUnloaded(Scene scene)
     {
-        Debug.Log(scene + " unloaded");
         SaveGame();
+        Debug.Log("Scene " + scene.GetHashCode() + " closed  wtih dataManager instance " + DataPersistanceManager.instance.GetInstanceID());
     }
 
     public void NewGame()
@@ -80,18 +85,18 @@ public class DataPersistanceManager : MonoBehaviour
             NewGame();
         }
 
-        //Load save data from a file
+        /*//Load save data from a file
         if (this.gameData == null)
         {
             Debug.Log("Loaded data is null, A new game needs to be created");
             return;
-        }
+        } */
 
         foreach(IDataPersistence persObj in dataPersistenceList)
         {
             persObj.LoadData(gameData);
         }
-        Debug.Log("Loaded gameData coins = " + gameData.coinCount);
+
     }
 
     public void SaveGame()
@@ -135,6 +140,21 @@ public class DataPersistanceManager : MonoBehaviour
     public Dictionary<string, GameData> GetAllProfilesGameData()
     {
         return fileDataHandler.LoadAllProfles();
+    }
+    
+    /* Reloads all the data
+     */
+    public void SetProfileId(int id)
+    {
+        selectedProfileId = id.ToString();
+        //Update the loaded data
+        dataPersistenceList = FindAllDataPersistenceObjects();
+        LoadGame();
+    }
+
+    public string getProfileId()
+    {
+        return selectedProfileId;
     }
 
 }

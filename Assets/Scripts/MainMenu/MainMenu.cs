@@ -57,7 +57,10 @@ public class MainMenu : MonoBehaviour, IDataPersistence
 
     public void LoadData(GameData data)
     {
-        if (data.coinCount == 0)
+        if (data == null) {
+            level1Button.interactable = false;
+            level2Button.interactable = false;
+        } else if (data.coinCount == 0)
         {
             level1Button.interactable = false;
             level2Button.interactable = false;
